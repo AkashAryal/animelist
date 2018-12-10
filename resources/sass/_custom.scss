@@ -1,0 +1,67 @@
+.bg{
+background-repeat: no-repeat;
+background-size: cover;
+}
+
+.opague{
+  opacity: .9;
+}
+
+.forminput{
+  background-color: #10314f;
+  color: white;
+}
+
+.formcard{
+  opacity: 0.85;
+  background-color: #0e273f;
+  border-color: #a7ebfd;
+  color: white;
+}
+
+.logout-hover:hover{
+  background-color: #10314f;
+}
+
+.btn-circle.btn-xl {
+    width: 70px;
+    height: 70px;
+    padding: 10px 16px;
+    border-radius: 35px;
+    font-size: 24px;
+    line-height: 1.33;
+}
+
+.btn-circle {
+    width: 30px;
+    height: 30px;
+    padding: 6px 0px;
+    border-radius: 15px;
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.42857;
+}
+
+table {
+    opacity: .85;
+    color: white;
+    border-color: #a7ebfd;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td, th {
+    border: 1px solid;
+    text-align: left;
+    padding: 8px;
+}
+
+tr {
+    background-color: #10314f;
+}
+
+img.sticky {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 1.5rem;
+}
