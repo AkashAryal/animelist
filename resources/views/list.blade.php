@@ -1,11 +1,11 @@
-<?php use Jikan\MyAnimeList\MalClient;use Jikan\Jikan;   $jikan = new Jikan;?>
+<?php use Jikan\MyAnimeList\MalClient;use Jikan\Jikan;use \App\Http\Controllers\PictureUrlController;   $jikan = new Jikan;?>
 @extends('layouts.app')
 @section('content')
 <div class="container">
   <div class="row">
     <div class="col-md-5 col-lg-5">
       @if(Session::has('form') && session('form')=="true")
-      <section class="card formcard" style="background-color: #10314f">
+      <section class="card formcard sticky" style="background-color: #10314f">
       <div class="card-header formcard" style="background-color: #10314f">Add Anime</div>
       <section class="card-body">
         {!! Form::open(['url' => 'list/submit']) !!}
@@ -32,7 +32,7 @@
     <img src="" id="cover" class="img-fluid sticky" height="350" width="350"></img>
   </div>
     <div class="col-md-7 col-lg-7">
-      <h1 style="color: white; text-align: right"><?php if(Session::has('user'))echo session('user')."'s List"; else echo Auth::user()->username."'s list";?></h1>
+      <h1 style="color: white; text-align: right"><?php echo Auth::user()->username."'s list";?></h1>
       <?php $counter=0;$counter2=0;?>
           @if(count($animes) >0)
             <table>
@@ -45,13 +45,27 @@
               </tr>
               @foreach($animes as $anime)
               <?php
-              $animeName = $anime->anime;
-                $search = $jikan->AnimeSearch("$animeName",1);
-                $firstResult = $search->getResults()[0];
-                $pics = $jikan->AnimePictures($firstResult->getMalId())[0]->getLarge();
+                $animeName = $anime->anime;
+                if(Session::has($animeName)){
+                  $pics = session($animeName);
+                }
+                elseif(PictureUrlController::inList($animeName)){
+                  //add to session var
+                  $temp1=PictureUrlController::getUrl($animeName);
+                  session([$animeName => $temp1]);
+                }else {
+                  //below
+                  $search = $jikan->AnimeSearch("$animeName",1);
+                  $firstResult = $search->getResults()[0];
+                  $pics = $jikan->AnimePictures($firstResult->getMalId())[0]->getLarge();
+                  //add to database
+                  PictureUrlController::add($animeName,$pics);
+                  //add to sesion var
+                  session([$animeName => $pics]);
+                }
               ?>
               <tr>
-                <td onmouseover="document.getElementById('cover').src='{{$pics}}';" onmouseout="document.getElementById('cover').src='';">{{$anime->anime}}</td>
+                <td onmouseover="document.getElementById('cover').src='{{session($animeName)}}';" onmouseout="document.getElementById('cover').src='';">{{$anime->anime}}</td>
                 <td><?php if($anime->completed ==1)echo "Completed";else echo "Plan To Watch" ?></td>
                 <td>{{$anime->updated_at}}</td>
                 <td><button type="button" class="addButton btn btn-default" onclick="document.getElementById({{$counter}}).submit()" style="background-color: Transparent;">

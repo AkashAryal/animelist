@@ -21,7 +21,7 @@ Route::post('/list/remove', 'listController@removeAnime')->name('list.remove')->
 Route::post('/list/complete', 'listController@completeAnime')->name('list.complete')->middleware('auth');
 
 Route::post('/list/submit', 'listController@addAnime')->middleware('auth');
-Route::post('/search/search', 'listController@getListFromAnotherUser')->middleware('auth');
+Route::post('/search/search', 'listController@getListFromAnotherUser')->name('search.search')->middleware('auth');
 
 Route::get('/search', function () {
     return view('search');
@@ -33,7 +33,7 @@ Route::get('/search/user/{user}', function ($user) {
   if(Session::has('alert2')){
   $alert2=session('alert2');
   Session::reflash();
-    return view('searchUserList')->with(['animes'=>$animes, 'alert2'=>$alert2, 'user'=>$user]);
+    return view('search')->with(['animes'=>$animes, 'alert2'=>$alert2, 'user'=>$user]);
   }else {
     Session::reflash();
     return view('searchUserList')->with(['animes'=>$animes, 'user'=>$user]);

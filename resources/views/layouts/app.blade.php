@@ -19,7 +19,7 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
-<body class="bg" background="{{asset('svg/hero.gif')}}">
+<body class="bg" style="background-attachment: fixed;" background="{{asset('svg/hero.gif')}}">
   <!--<IMG class="bg" SRC="{{asset('svg/hero.gif')}}">-->
     <div id="app">
         <nav class="navbar opague navbar-expand-md navbar-dark bg-dark">
