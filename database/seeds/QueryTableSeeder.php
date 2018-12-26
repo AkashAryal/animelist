@@ -102,7 +102,7 @@ class QueryTableSeeder extends Seeder
         "character"=>"Hikkigaya Hachiman"
       ),
       array(
-        "anime"=>"Yahari Ore no Seishun Love Comedy wa Machigatteiru",
+        "anime"=>"Seiken Tsukai no World Break",
         "quote"=>"It all began in water.<br>
         It all returns to the water.<br>
         In other words, water is life, and yet death.<br>
@@ -114,7 +114,7 @@ class QueryTableSeeder extends Seeder
         I will become a serpent, open my mouth, and devour billions of lands.An eternal void, never filling.An eternal pleasure, never satiated.<br>
         You must change, all things, and return to my maw.<br>
         Ouroboros",
-        "character"=>"test"
+        "character"=>"Moroha Haimura"
       ),
       array(
         "anime"=>"Yahari Ore no Seishun Love Comedy wa Machigatteiru",
