@@ -6,28 +6,28 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateQuotesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::create('quotes', function (Blueprint $table) {
-            $table->text('quote');
-            $table->string('character');
-            $table->string('anime');
-            $table->timestamps();
-        });
-    }
+  /**
+  * Run the migrations.
+  *
+  * @return void
+  */
+  public function up()
+  {
+    Schema::create('quotes', function (Blueprint $table) {
+      $table->text('quote');
+      $table->string('character');
+      $table->string('anime');
+      $table->timestamps();
+    });
+  }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::dropIfExists('quotes');
-    }
+  /**
+  * Reverse the migrations.
+  *
+  * @return void
+  */
+  public function down()
+  {
+    Schema::dropIfExists('quotes');
+  }
 }

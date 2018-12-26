@@ -103,7 +103,22 @@ class QueryTableSeeder extends Seeder
       ),
       array(
         "anime"=>"Yahari Ore no Seishun Love Comedy wa Machigatteiru",
-        "quote"=>"Question: The world will not change, but you can change yourself. So then, how will you change?\nAnswer: You become the god of a new world",
+        "quote"=>"It all began in water.<br>
+        It all returns to the water.<br>
+        In other words, water is life, and yet death.<br>
+        The mother that bears us, and a devouring serpent.<br>
+        All things are in flux, and not even time can go against the current.<br>
+        Like a boat tossed about on a great river, in the end it too is merely devoured.<br>
+        Ahh, cruel uncertain providence.But that cruelty and uncertainty have already forgotten.<br>
+        The face of their most beloved mother.<br>
+        I will become a serpent, open my mouth, and devour billions of lands.An eternal void, never filling.An eternal pleasure, never satiated.<br>
+        You must change, all things, and return to my maw.<br>
+        Ouroboros",
+        "character"=>"test"
+      ),
+      array(
+        "anime"=>"Yahari Ore no Seishun Love Comedy wa Machigatteiru",
+        "quote"=>"Question: The world will not change, but you can change yourself. So then, how will you change?<br>Answer: You become the god of a new world",
         "character"=>"Hikkigaya Hachiman"
       ),
       array(

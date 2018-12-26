@@ -12,5 +12,6 @@ class QuotesController extends Controller
       $quote=quotes::inRandomOrder()->first();
       $output = "\"".$quote['quote']."\" - ".$quote['character']." (".$quote['anime'].")";
       return $output;
+
     }
 }
