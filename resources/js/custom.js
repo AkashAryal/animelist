@@ -4,6 +4,12 @@ window.setTimeout(function() {
         $(this).remove();
     });
 }, 5000);
+
+$( "td" ).hover(function() {
+  $("#addAnimeForm").remove();
+  
+});
+
 });
 
 window.appendSynContainer = function(){
