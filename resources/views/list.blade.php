@@ -8,7 +8,7 @@
       <section id="addAnimeForm" class="card formcard sticky  mx-5" style="background-color: #10314f">
         <div class="card-header formcard" style="background-color: #10314f">Add Anime</div>
         <section class="card-body">
-          {!! Form::open(['url' => 'list/submit']) !!}
+          {!! Form::open(['url' => 'list/submit', 'onsubmit'=>'localStorage.setItem("isAddAnimeFormActive",false);']) !!}
           <div class="form-group">
             {{ Form::label('anime', 'Anime') }}
             {{ Form::text('anime', NULL, array('placeholder'=>'Anime', 'class'=>'form-control forminput')) }}
@@ -91,7 +91,7 @@
         ?>
         <tr>
           <?php $p="pics"; $s="synopsis"; $elem="<div class='card-header formcard'>Synopsis</div><div class='card-body formcard' style='border-bottom: 1px solid #7cb5ca;'><p id ='synopsis'>";?>
-          <td onmousedown="if(window.leave==true)window.leave=false;else {window.leave=true;}" onmouseover="if(window.leave==true){document.getElementById('cover').src='{{session($animeName)[$p]}}';appendSynContainer();document.getElementById('synopsis').innerHTML='{{session($animeName)[$s]}}';}" onmouseout="if(window.leave==true){document.getElementById('cover').src='';removeSynInfoContainer()}">{{$anime->anime}}</td>
+          <td class="AnimeNameCell" onmousedown="if(window.leave==true)window.leave=false;else {window.leave=true;}" onmouseover="if(window.leave==true && (localStorage.getItem('isAddAnimeFormActive')=='false' || localStorage.getItem('isAddAnimeFormActive')==null) ){document.getElementById('cover').src='{{session($animeName)[$p]}}';appendSynContainer();document.getElementById('synopsis').innerHTML='{{session($animeName)[$s]}}';}" onmouseout="if(window.leave==true){document.getElementById('cover').src='';removeSynInfoContainer()}">{{$anime->anime}}</td>
           <td><?php if($anime->completed ==1)echo "Completed";else echo "Plan To Watch" ?></td>
           <td>{{$anime->updated_at}}</td>
           <td><button type="button" class="addButton btn btn-default" onclick="document.getElementById({{$counter}}).submit()" style="background-color: Transparent;">
@@ -119,7 +119,7 @@
 
           <div class="float-right">
             <br />
-            <button type="button" class="addButton btn btn-default btn-circle btn-xl" onclick="document.getElementById('createForm').submit()"><i class="fa fa-plus-circle" style="font-size:40px;"></i>
+            <button type="button" class="addButton btn btn-default btn-circle btn-xl" onclick="localStorage.setItem('isAddAnimeFormActive',true);document.getElementById('createForm').submit();"><i class="fa fa-plus-circle" style="font-size:40px;"></i>
             </div>
             <form id="createForm" action="{{ url('/createForm') }}" method="POST" style="display: none;">
               @csrf
