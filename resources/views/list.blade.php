@@ -30,6 +30,7 @@
     </section>
     </section>
     <img src="" id="cover" class="img-fluid sticky" height="350" width="350"></img>
+    <p id ="synopsis"></p>
   </div>
     <div class="col-md-7 col-lg-7">
       <h1 style="color: white; text-align: right"><?php echo Auth::user()->username."'s list";?></h1>
@@ -47,25 +48,36 @@
               <?php
                 $animeName = $anime->anime;
                 if(Session::has($animeName)){
-                  $pics = session($animeName);
+                //  $pics = session($animeName);
                 }
                 elseif(PictureUrlController::inList($animeName)){
                   //add to session var
                   $temp1=PictureUrlController::getUrl($animeName);
-                  session([$animeName => $temp1]);
+                  //session([$animeName => $temp1]);
+                    $search = $jikan->AnimeSearch("$animeName",1);
+                    $firstResult = $search->getResults()[0];
+                    $synopsis=$jikan->Anime($firstResult->getMalId())->getSynopsis();
+                  session([$animeName => array("pics" => $temp1, "synopsis"=>$synopsis)]);
+
                 }else {
                   //below
                   $search = $jikan->AnimeSearch("$animeName",1);
                   $firstResult = $search->getResults()[0];
                   $pics = $jikan->AnimePictures($firstResult->getMalId())[0]->getLarge();
+                  $synopsis=$jikan->Anime($firstResult->getMalId())->getSynopsis();
+
                   //add to database
                   PictureUrlController::add($animeName,$pics);
                   //add to sesion var
-                  session([$animeName => $pics]);
+                  //session([$animeName => $pics]);
+                  //ATTENTON: iF YOU CHANGe THS LNE BELOW, CHANGE THE SESSOMn ABOVE;
+                  session([$animeName => array("pics" => $pics, "synopsis"=>$synopsis)]);
+
                 }
               ?>
               <tr>
-                <td onmouseover="document.getElementById('cover').src='{{session($animeName)}}';" onmouseout="document.getElementById('cover').src='';">{{$anime->anime}}</td>
+                <?php $p="pics"; $s="synopsis";?>
+                <td onmouseover="document.getElementById('cover').src='{{session($animeName)[$p]}}';document.getElementById('synopsis').innerHTML='{{session($animeName)[$s]}}'; " onmouseout="document.getElementById('cover').src='';document.getElementById('synopsis').innerHTML=''">{{$anime->anime}}</td>
                 <td><?php if($anime->completed ==1)echo "Completed";else echo "Plan To Watch" ?></td>
                 <td>{{$anime->updated_at}}</td>
                 <td><button type="button" class="addButton btn btn-default" onclick="document.getElementById({{$counter}}).submit()" style="background-color: Transparent;">
