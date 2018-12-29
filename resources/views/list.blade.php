@@ -5,7 +5,7 @@
   <div class="row">
     <div class="col-md-6 col-lg-6">
       @if(Session::has('form') && session('form')=="true")
-      <section class="card formcard sticky" style="background-color: #10314f">
+      <section id="addAnimeForm" class="card formcard sticky  mx-5" style="background-color: #10314f">
         <div class="card-header formcard" style="background-color: #10314f">Add Anime</div>
         <section class="card-body">
           {!! Form::open(['url' => 'list/submit']) !!}
