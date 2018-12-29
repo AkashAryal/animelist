@@ -48,15 +48,15 @@
               <?php
                 $animeName = $anime->anime;
                 if(Session::has($animeName)){
-                //  $pics = session($animeName);
+                  $pics = session($animeName);
                 }
                 elseif(PictureUrlController::inList($animeName)){
                   //add to session var
                   $temp1=PictureUrlController::getUrl($animeName);
                   //session([$animeName => $temp1]);
-                    $search = $jikan->AnimeSearch("$animeName",1);
-                    $firstResult = $search->getResults()[0];
-                    $synopsis=$jikan->Anime($firstResult->getMalId())->getSynopsis();
+                  $search = $jikan->AnimeSearch("$animeName",1);
+                  $firstResult = $search->getResults()[0];
+                  $synopsis=addslashes($jikan->Anime($firstResult->getMalId())->getSynopsis());
                   session([$animeName => array("pics" => $temp1, "synopsis"=>$synopsis)]);
 
                 }else {
@@ -64,7 +64,7 @@
                   $search = $jikan->AnimeSearch("$animeName",1);
                   $firstResult = $search->getResults()[0];
                   $pics = $jikan->AnimePictures($firstResult->getMalId())[0]->getLarge();
-                  $synopsis=$jikan->Anime($firstResult->getMalId())->getSynopsis();
+                  $synopsis=addslashes($jikan->Anime($firstResult->getMalId())->getSynopsis());
 
                   //add to database
                   PictureUrlController::add($animeName,$pics);
