@@ -19,13 +19,16 @@ class PictureUrlController extends Controller
     public static function getUrl($animeName){
       return pictureUrl::where('anime',$animeName)->value('url');
     }
+    public static function getSyno($animeName){
+      return pictureUrl::where('anime',$animeName)->value('synopsis');
+    }
 
-    public static function add($animeName,$pics){
+    public static function add($animeName,$pics,$syno){
       $pUrl = new pictureUrl;
 
       $pUrl->anime = $animeName;
       $pUrl->url = $pics;
-
+      $pUrl->synopsis = $syno;
       $pUrl->save();
     }
 }

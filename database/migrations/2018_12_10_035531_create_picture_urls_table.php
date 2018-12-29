@@ -17,6 +17,7 @@ class CreatePictureUrlsTable extends Migration
             $table->increments('id');
             $table->string('anime');
             $table->string('url');
+            $table->text('synopsis');
             $table->timestamps();
         });
     }

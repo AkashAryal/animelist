@@ -29,8 +29,10 @@
       @include('inc.alert')
     </section>
     </section>
-    <img src="" id="cover" class="img-fluid sticky" height="350" width="350"></img>
-    <p id ="synopsis"></p>
+    <div class="sticky">
+      <img src="" id="cover" class="img-fluid" height="350" width="350"></img>
+      <p id ="synopsis"></p>
+    </div>
   </div>
     <div class="col-md-7 col-lg-7">
       <h1 style="color: white; text-align: right"><?php echo Auth::user()->username."'s list";?></h1>
@@ -52,12 +54,10 @@
                 }
                 elseif(PictureUrlController::inList($animeName)){
                   //add to session var
-                  $temp1=PictureUrlController::getUrl($animeName);
+                  $pics=PictureUrlController::getUrl($animeName);
                   //session([$animeName => $temp1]);
-                  $search = $jikan->AnimeSearch("$animeName",1);
-                  $firstResult = $search->getResults()[0];
-                  $synopsis=addslashes($jikan->Anime($firstResult->getMalId())->getSynopsis());
-                  session([$animeName => array("pics" => $temp1, "synopsis"=>$synopsis)]);
+                  $synopsis=PictureUrlController::getSyno($animeName);
+                  session([$animeName => array("pics" => $pics, "synopsis"=>$synopsis)]);
 
                 }else {
                   //below
@@ -67,7 +67,7 @@
                   $synopsis=addslashes($jikan->Anime($firstResult->getMalId())->getSynopsis());
 
                   //add to database
-                  PictureUrlController::add($animeName,$pics);
+                  PictureUrlController::add($animeName,$pics,$synopsis);
                   //add to sesion var
                   //session([$animeName => $pics]);
                   //ATTENTON: iF YOU CHANGe THS LNE BELOW, CHANGE THE SESSOMn ABOVE;
