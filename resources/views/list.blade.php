@@ -4,6 +4,7 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-6 col-lg-6">
+      @include('inc.alert')
       @if(Session::has('form') && session('form')=="true")
       <section id="addAnimeForm" class="card formcard sticky  mx-5" style="background-color: #10314f">
         <div class="card-header formcard" style="background-color: #10314f">Add Anime</div>
@@ -26,25 +27,19 @@
           </div></center>
           {!! Form::close() !!}
           @endif
-          @include('inc.alert')
         </section>
       </section>
       <div class="container sticky">
         <div class="row">
           <div class="col-md-7 col-lg-7">
-            <img src="" id="cover" class="img-fluid" height="300" width="350"></img>
-          </div>
+            <img src="" id="cover" class="img-fluid mb-2" height="300" width="350"></img>
+            <div id="rec">
 
+            </div>
+          </div>
           <div class="col-md-5 col-lg-5" id="synInfo">
-
-            <!--<div class="card-header formcard">Synopsis</div>
-
-            <div class="card-body formcard" style="border-bottom: 1px solid #7cb5ca;">
-
-              <p id ="synopsis"></p>
-            </div>-->
+            <!-- jQuery add synopsis information here-->
           </div>
-
         </div>
       </div>
     </div>
@@ -64,78 +59,69 @@
         <?php
         $animeName = $anime->anime;
         if(Session::has($animeName)){
-          $pics = session($animeName);
+          //then everything is set
         }
-        elseif(PictureUrlController::inList($animeName)){
-          //add to session var
-          $pics=PictureUrlController::getUrl($animeName);
-          //session([$animeName => $temp1]);
-          $synopsis=PictureUrlController::getSyno($animeName);
-          session([$animeName => array("pics" => $pics, "synopsis"=>$synopsis)]);
-          //Anime::testF();
-
+        elseif(PictureUrlController::inList($animeName)){ //in db
+          $pics=PictureUrlController::getUrl($animeName); //get cover image url from db
+          $synopsis=PictureUrlController::getSyno($animeName); //get anime synopsis
+          //$recommendations=PictureUrlController::getRec();
+          session([$animeName => array("pics" => $pics, "synopsis"=>$synopsis)]); //add to session var
         }else {
-          //below
-          /*$search = $jikan->AnimeSearch("$animeName",1);
-          $firstResult = $search->getResults()[0];
-          $pics = $jikan->AnimePictures($firstResult->getMalId())[0]->getLarge();*/
-            $pics = Anime::getLargeCover("$animeName");
-          /*$synopsis=addslashes($jikan->Anime($firstResult->getMalId())->getSynopsis());*/
-            $synopsis= Anime::getSynopsis("$animeName");
-          //add to database
-          PictureUrlController::add($animeName,$pics,$synopsis);
-          //add to sesion var
-          //session([$animeName => $pics]);
-          //ATTENTON: iF YOU CHANGe THS LNE BELOW, CHANGE THE SESSOMn ABOVE;
-          session([$animeName => array("pics" => $pics, "synopsis"=>$synopsis)]);
+          $Anime = new Anime("$animeName"); //create helper Anime class
+          $pics = $Anime->getLargeCover(); //get cover image url
+          $synopsis = $Anime->getSynopsis(); //get anime synopsis
+          $recommendations = $Anime->getRecommendations(1);
+          PictureUrlController::add($animeName,$pics,$synopsis); //add to database
 
+          //ATTENTON: iF YOU CHANGe THS LNE BELOW, CHANGE THE SESSOMn ABOVE;
+          session([$animeName => array("pics" => $pics, "synopsis"=>$synopsis, "recommendations"=>$recommendations)]); //add to session var
         }
         ?>
         <tr>
-          <?php $p="pics"; $s="synopsis"; $elem="<div class='card-header formcard'>Synopsis</div><div class='card-body formcard' style='border-bottom: 1px solid #7cb5ca;'><p id ='synopsis'>";?>
-          <td class="AnimeNameCell" onmousedown="if(window.leave==true)window.leave=false;else {window.leave=true;}" onmouseover="if(window.leave==true && (localStorage.getItem('isAddAnimeFormActive')=='false' || localStorage.getItem('isAddAnimeFormActive')==null) ){document.getElementById('cover').src='{{session($animeName)[$p]}}';appendSynContainer();document.getElementById('synopsis').innerHTML='{{session($animeName)[$s]}}';}" onmouseout="if(window.leave==true){document.getElementById('cover').src='';removeSynInfoContainer()}">{{$anime->anime}}</td>
-          <td><?php if($anime->completed ==1)echo "Completed";else echo "Plan To Watch" ?></td>
-          <td>{{$anime->updated_at}}</td>
-          <td><button type="button" class="addButton btn btn-default" onclick="document.getElementById({{$counter}}).submit()" style="background-color: Transparent;">
-            <i class="fa fa-close"></i></button></td>
-            <td><button type="button" class="addButton btn btn-default" onclick="document.getElementById('com{{$counter}}').submit()" style="background-color: Transparent;">
-              <i class="fa fa-check"></i></button></td>
-            </tr>
+          <?php $p="pics"; $s="synopsis"; $r="recommendations"; $t='title'; $u="url";$elem="<div class='card-header formcard'>Synopsis</div><div class='card-body formcard' style='border-bottom: 1px solid #7cb5ca;'><p id ='synopsis'>";?>
+            <td class="AnimeNameCell" onmousedown="if(window.leave==true)window.leave=false;else {window.leave=true;}" onmouseover="if(window.leave==true && (localStorage.getItem('isAddAnimeFormActive')=='false' || localStorage.getItem('isAddAnimeFormActive')==null) ){document.getElementById('cover').src='{{session($animeName)[$p]}}';appendSynContainer();document.getElementById('synopsis').innerHTML='{{session($animeName)[$s]}}'; createRecBox(); document.getElementById('rList').innerHTML='<?php if(count(session($animeName)) ==3){echo "<a href=".session($animeName)[$r][0][$u].">".session($animeName)[$r][0][$t]."</a>";} else echo "N/A";?>';}" onmouseout="if(window.leave==true){document.getElementById('cover').src='';removeHoverContainers()}">{{$anime->anime}}</td>
+            <td><?php if($anime->completed ==1)echo "Completed";else echo "Plan To Watch" ?></td>
+            <td>{{$anime->updated_at}}</td>
+            <td><button type="button" class="addButton btn btn-default" onclick="document.getElementById({{$counter}}).submit()" style="background-color: Transparent;">
+              <i class="fa fa-close"></i></button></td>
+              <td><button type="button" class="addButton btn btn-default" onclick="document.getElementById('com{{$counter}}').submit()" style="background-color: Transparent;">
+                <i class="fa fa-check"></i></button></td>
+              </tr>
 
-            <form method="POST" action="{{ URL::route('list.remove') }}" id="{{ $counter }}"  style="display: none;">
-              <input form="{{ $counter }}" type="hidden" name="anime" value="{{$anime->anime}}"></input>
-            </form>
+              <form method="POST" action="{{ URL::route('list.remove') }}" id="{{ $counter }}"  style="display: none;">
+                <input form="{{ $counter }}" type="hidden" name="anime" value="{{$anime->anime}}"></input>
+              </form>
 
-            <form method="POST" action="{{ URL::route('list.complete') }}" id="com{{ $counter }}"  style="display: none;">
-              <input form="com{{ $counter }}" type="hidden" name="anime" value="{{$anime->anime}}"></input>
-            </form>
+              <form method="POST" action="{{ URL::route('list.complete') }}" id="com{{ $counter }}"  style="display: none;">
+                <input form="com{{ $counter }}" type="hidden" name="anime" value="{{$anime->anime}}"></input>
+              </form>
 
-            <?php $counter++;$counter2++;?>
-            @endforeach
-          </table>
-          @else
-          <ul class="list-group">
-            <li class="list-group-item">Nothing!</li>
-          </ul>
-          @endif
+              <?php $counter++;$counter2++;?>
+              @endforeach
+            </table>
+            @else
+            <ul class="list-group">
+              <li class="list-group-item">Nothing!</li>
+            </ul>
+            @endif
 
-          <div class="float-right">
-            <br />
-            <button type="button" class="addButton btn btn-default btn-circle btn-xl" onclick="localStorage.setItem('isAddAnimeFormActive',true);document.getElementById('createForm').submit();"><i class="fa fa-plus-circle" style="font-size:40px;"></i>
+            <div class="float-right">
+              <br />
+              <button type="button" class="addButton btn btn-default btn-circle btn-xl" onclick="localStorage.setItem('isAddAnimeFormActive',true);document.getElementById('createForm').submit();"><i class="fa fa-plus-circle" style="font-size:40px;"></i>
+              </div>
+              <form id="createForm" action="{{ url('/createForm') }}" method="POST" style="display: none;">
+                @csrf
+              </form>
             </div>
-            <form id="createForm" action="{{ url('/createForm') }}" method="POST" style="display: none;">
-              @csrf
-            </form>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-md-10 col-lg-10">
+          <div class="row">
+            <div class="col-md-10 col-lg-10">
 
-          </div>
-          <div class="col-md-2 col-lg-2">
+            </div>
+            <div class="col-md-2 col-lg-2">
 
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    @endsection
+      @endsection

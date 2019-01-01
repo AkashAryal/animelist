@@ -36009,8 +36009,13 @@ window.appendSynContainer = function () {
     $("#synInfo").append("<div class='synInfoContainer'><div class='card-header formcard'>Synopsis</div><div class='card-body formcard' style='border-bottom: 1px solid #7cb5ca;'><p style='color: #98def5;' class='mb-2'>Click on the anime name (in table) to freeze synopsis. Click again to unfreeze.</p><p id ='synopsis' class='pre-scrollable'></div>");
 };
 
-window.removeSynInfoContainer = function () {
+window.createRecBox = function () {
+    $("#rec").append("<div class='card-header formcard recContainer'><h5>Recommended Anime:</h5><div id='rList'></div></div>");
+};
+
+window.removeHoverContainers = function () {
     $(".synInfoContainer").remove();
+    $(".recContainer").remove();
 };
 window.leave = true;
 //window.isAddAnimeFormActive=false;
