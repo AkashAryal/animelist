@@ -1,4 +1,4 @@
-<?php use Jikan\MyAnimeList\MalClient;use Jikan\Jikan;use \App\Http\Controllers\PictureUrlController;   $jikan = new Jikan;?>
+<?php use App\CustomClasses\Anime\Anime; use Jikan\MyAnimeList\MalClient;use Jikan\Jikan;use \App\Http\Controllers\PictureUrlController;   $jikan = new Jikan;?>
 @extends('layouts.app')
 @section('content')
 <div class="container-fluid">
@@ -72,14 +72,16 @@
           //session([$animeName => $temp1]);
           $synopsis=PictureUrlController::getSyno($animeName);
           session([$animeName => array("pics" => $pics, "synopsis"=>$synopsis)]);
+          //Anime::testF();
 
         }else {
           //below
-          $search = $jikan->AnimeSearch("$animeName",1);
+          /*$search = $jikan->AnimeSearch("$animeName",1);
           $firstResult = $search->getResults()[0];
-          $pics = $jikan->AnimePictures($firstResult->getMalId())[0]->getLarge();
-          $synopsis=addslashes($jikan->Anime($firstResult->getMalId())->getSynopsis());
-
+          $pics = $jikan->AnimePictures($firstResult->getMalId())[0]->getLarge();*/
+            $pics = Anime::getLargeCover("$animeName");
+          /*$synopsis=addslashes($jikan->Anime($firstResult->getMalId())->getSynopsis());*/
+            $synopsis= Anime::getSynopsis("$animeName");
           //add to database
           PictureUrlController::add($animeName,$pics,$synopsis);
           //add to sesion var
