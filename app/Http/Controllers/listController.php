@@ -27,7 +27,7 @@ class listController extends Controller
       else{
       $anime = new animeList;
       $anime->username=$username;
-      $anime->anime = $request->input('anime');
+      $anime->anime = addslashes($request->input('anime'));
       if($request->input('completed') =="Completed")
       $anime->completed = 1;
       else {

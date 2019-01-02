@@ -28,18 +28,16 @@ class Anime extends Jikan
   how to retrieve;
     session($animeName)['recommendations'][0]['title']
   */
-  public function getRecommendations(int $howMany){
+  public function getRecommendations(){
     $recAnimesObj = $this->jikan->AnimeRecommendations($this->firstAnime->getMalId());
 
     $animeArray=[];
-    $counter=0;
+
     foreach ($recAnimesObj as $key => $value) {
-      if($counter == $howMany)
-      break;
-      else{
+
+
         $animeArray[] = array("title"=>$value->getTitle(), "url"=>$value->getUrl());
-        $counter++;
-      }
+    
     }
     return $animeArray;
   }

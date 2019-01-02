@@ -23,6 +23,7 @@ Route::post('/createForm', 'listController@createForm')->middleware('auth');
 Route::post('/list/remove', 'listController@removeAnime')->name('list.remove')->middleware('auth');
 Route::post('/list/complete', 'listController@completeAnime')->name('list.complete')->middleware('auth');
 
+Route::post('/list/setRecNum', 'AnimeRecommendationController@setRecNum')->name('list.setRecNum')->middleware('auth');
 Route::post('/list/submit', 'listController@addAnime')->middleware('auth');
 Route::post('/search/search', 'listController@getListFromAnotherUser')->name('search.search')->middleware('auth');
 

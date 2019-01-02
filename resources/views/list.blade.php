@@ -1,34 +1,11 @@
-<?php use App\CustomClasses\Anime\Anime; use Jikan\MyAnimeList\MalClient;use Jikan\Jikan;use \App\Http\Controllers\PictureUrlController;   $jikan = new Jikan;?>
+<?php use App\CustomClasses\Anime\Anime; use Jikan\MyAnimeList\MalClient;use Jikan\Jikan;use \App\Http\Controllers\PictureUrlController; use \App\Http\Controllers\AnimeRecommendationController;  $jikan = new Jikan;?>
 @extends('layouts.app')
 @section('content')
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-6 col-lg-6">
       @include('inc.alert')
-      @if(Session::has('form') && session('form')=="true")
-      <section id="addAnimeForm" class="card formcard sticky  mx-5" style="background-color: #10314f">
-        <div class="card-header formcard" style="background-color: #10314f">Add Anime</div>
-        <section class="card-body">
-          {!! Form::open(['url' => 'list/submit', 'onsubmit'=>'localStorage.setItem("isAddAnimeFormActive",false);']) !!}
-          <div class="form-group">
-            {{ Form::label('anime', 'Anime') }}
-            {{ Form::text('anime', NULL, array('placeholder'=>'Anime', 'class'=>'form-control forminput')) }}
-          </div>
-          <div class="form-group">
-            {{ Form::label('completed', 'Completed') }}
-            {{ Form::checkbox('completed', 'Completed', array('class'=>'form-control forminput')) }}
-          </div>
-          <div class="form-group">
-            {{ Form::label('updated_at', 'Completed/Updated At') }}
-            <input type="text" name="updated_at" value="{{date('Y-m-d H:i:s')}}" style="background-color: #10314f;" class="form-control forminput" readonly>
-          </div>
-          <center><div>
-            {{ Form::submit('Submit', array('class'=>'btn btn-primary forminput')) }}
-          </div></center>
-          {!! Form::close() !!}
-          @endif
-        </section>
-      </section>
+      @include('inc.addAnimeForm')
       <div class="container sticky">
         <div class="row">
           <div class="col-md-7 col-lg-7">
@@ -58,28 +35,159 @@
         @foreach($animes as $anime)
         <?php
         $animeName = $anime->anime;
-        if(Session::has($animeName)){
-          //then everything is set
+        if(Session::has($animeName."numOfRec")){
+          $defaultNumRec=(int)session($animeName."numOfRec");
+          //echo session($animeName."numOfRec");
+        }else{
+          $defaultNumRec=3;
         }
-        elseif(PictureUrlController::inList($animeName)){ //in db
+
+        $pics="";
+        $synopsis="";
+        $recommendations;
+
+        if(Session::has($animeName)){
+          $recommendations=AnimeRecommendationController::getRecommendations($defaultNumRec, $animeName);
+          $pics=session($animeName)['pics'];
+          $synopsis=session($animeName)['synopsis'];
+          //var_dump($recommendations);
+        }elseif(PictureUrlController::inList($animeName)){
           $pics=PictureUrlController::getUrl($animeName); //get cover image url from db
-          $synopsis=PictureUrlController::getSyno($animeName); //get anime synopsis
-          //$recommendations=PictureUrlController::getRec();
-          session([$animeName => array("pics" => $pics, "synopsis"=>$synopsis)]); //add to session var
-        }else {
+          $synopsis=PictureUrlController::getSyno($animeName);
+          $recommendations=AnimeRecommendationController::getRecommendations($defaultNumRec, $animeName);
+        }else{
           $Anime = new Anime("$animeName"); //create helper Anime class
           $pics = $Anime->getLargeCover(); //get cover image url
           $synopsis = $Anime->getSynopsis(); //get anime synopsis
-          $recommendations = $Anime->getRecommendations(1);
-          PictureUrlController::add($animeName,$pics,$synopsis); //add to database
+          $recAnimesObj = $Anime->getRecommendations();
 
+          PictureUrlController::add($animeName,$pics,$synopsis); //add to database
+          AnimeRecommendationController::addRecommendations($animeName,$recAnimesObj); //add to database
+          //ATTENTON: iF YOU CHANGe THS LNE BELOW, CHANGE THE SESSOMn ABOVE;
+          $counter3=0;
+          $recommendations=[];
+          foreach ($recAnimesObj as $key => $value) {
+            if($counter3 == $defaultNumRec)
+            break;
+            else{
+              $recommendations[] = array("title"=>$value['title'], "url"=>$value['url']);
+              $counter3++;
+            }
+          }
+
+        }
+        session([$animeName => array("pics" => $pics, "synopsis"=>$synopsis, "recommendations"=>$recommendations)]); //add to session var
+        /*
+        if(Session::has($animeName."numOfRec")){
+          if(AnimeRecommendationController::hasEnoughRec($anime, (int)session($animeName."numOfRec"))){ //true is num of recs in db is >= $numRec
+            $recommendations=AnimeRecommendationController::getRecommendations((int)session($animeName."numOfRec"));
+          }else{
+            $Anime = new Anime("$animeName");
+            $recommendations = $Anime->getRecommendations((int)session($animeName."numOfRec"),$animeName);
+            AnimeRecommendationController::addRecommendations($animeName, $recommendations);
+          }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        if(Session::has($animeName) && Session::has($animeName."numOfRec")){
+          //then everything is set
+          echo "a";
+          if(AnimeRecommendationController::hasEnoughRec($anime, (int)session($animeName."numOfRec"))){ //true is num of recs in db is >= $numRec
+            $recommendations=AnimeRecommendationController::getRecommendations((int)session($animeName."numOfRec"));
+          }else{
+            $Anime = new Anime("$animeName");
+            $recommendations = $Anime->getRecommendations((int)session($animeName."numOfRec"),$animeName);
+            AnimeRecommendationController::addRecommendations($animeName, $recommendations);
+          }
+          session([$animeName => array("pics" => session($animeName)['pics'], "synopsis"=>session($animeName)['synopsis']), "recommendations"=>$recommendations]);
+        }
+        elseif(PictureUrlController::inList($animeName) && AnimeRecommendationController::hasEnoughRec($anime, 1)){ //in db
+          echo "b";
+          $pics=PictureUrlController::getUrl($animeName); //get cover image url from db
+          $synopsis=PictureUrlController::getSyno($animeName); //get anime synopsis
+          if(Session::has($animeName."numOfRec")){
+            echo "c";
+            if(AnimeRecommendationController::hasEnoughRec($anime, (int)session($animeName."numOfRec"))){ //true is num of recs in db is >= $numRec
+              $recommendations=AnimeRecommendationController::getRecommendations((int)session($animeName."numOfRec"));
+            }else{
+              $Anime = new Anime("$animeName");
+              $recommendations = $Anime->getRecommendations((int)session($animeName."numOfRec"),$animeName);
+              AnimeRecommendationController::addRecommendations($animeName, $recommendations);
+
+            }
+          }else{
+            echo "d";
+            $recommendations=AnimeRecommendationController::getRecommendations($defaultNumRec, $animeName);
+          }
+          //$recommendations=PictureUrlController::getRec();
+          session([$animeName => array("pics" => $pics, "synopsis"=>$synopsis), "recommendations"=>$recommendations]); //add to session var
+        }else {
+          echo "y";
+          $Anime = new Anime("$animeName"); //create helper Anime class
+          $pics = $Anime->getLargeCover(); //get cover image url
+          $synopsis = $Anime->getSynopsis(); //get anime synopsis
+          if(Session::has($animeName."numOfRec")){
+            $recommendations = $Anime->getRecommendations((int)session($animeName."numOfRec"));
+          }else{
+            $recommendations = $Anime->getRecommendations($defaultNumRec);
+            echo "z";
+          }
+          PictureUrlController::add($animeName,$pics,$synopsis); //add to database
+          AnimeRecommendationController::addRecommendations($animeName,$recommendations); //add to database
           //ATTENTON: iF YOU CHANGe THS LNE BELOW, CHANGE THE SESSOMn ABOVE;
           session([$animeName => array("pics" => $pics, "synopsis"=>$synopsis, "recommendations"=>$recommendations)]); //add to session var
-        }
+        }*/
         ?>
         <tr>
-          <?php $p="pics"; $s="synopsis"; $r="recommendations"; $t='title'; $u="url";$elem="<div class='card-header formcard'>Synopsis</div><div class='card-body formcard' style='border-bottom: 1px solid #7cb5ca;'><p id ='synopsis'>";?>
-            <td class="AnimeNameCell" onmousedown="if(window.leave==true)window.leave=false;else {window.leave=true;}" onmouseover="if(window.leave==true && (localStorage.getItem('isAddAnimeFormActive')=='false' || localStorage.getItem('isAddAnimeFormActive')==null) ){document.getElementById('cover').src='{{session($animeName)[$p]}}';appendSynContainer();document.getElementById('synopsis').innerHTML='{{session($animeName)[$s]}}'; createRecBox(); document.getElementById('rList').innerHTML='<?php if(count(session($animeName)) ==3){echo "<a href=".session($animeName)[$r][0][$u].">".session($animeName)[$r][0][$t]."</a>";} else echo "N/A";?>';}" onmouseout="if(window.leave==true){document.getElementById('cover').src='';removeHoverContainers()}">{{$anime->anime}}</td>
+          <?php $p="pics"; $s="synopsis"; $r="recommendations"; $t='title'; $u="url";
+          $elem="<div class='card-header formcard'>Synopsis</div><div class='card-body formcard' style='border-bottom: 1px solid #7cb5ca;'><p id ='synopsis'>";?>
+
+            <td class="AnimeNameCell" onmousedown="if(window.leave==true)window.leave=false;else {window.leave=true;}"
+            onmouseover="if(window.leave==true && (localStorage.getItem('isAddAnimeFormActive')=='false' || localStorage.getItem('isAddAnimeFormActive')==null) )
+            {document.getElementById('cover').src='{{session($animeName)[$p]}}';
+            appendSynContainer();
+            document.getElementById('synopsis').innerHTML='{{session($animeName)[$s]}}';
+            localStorage.setItem('animeR','<?php echo addslashes($anime->anime);?>');
+            createRecBox();
+            document.getElementById('rList').innerHTML='<?php if(count(session($animeName)) ==3){
+              $rec=session($animeName)[$r];
+              foreach ($rec as $key => $value) {
+                echo "<a href=".$value[$u].">".$value[$t]."</a><br>";
+              }
+            } else echo "N/A";?>';}"
+            onmouseout="if(window.leave==true){document.getElementById('cover').src='';removeHoverContainers();localStorage.setItem('animeR','');}">{{$anime->anime}}</td>
+
             <td><?php if($anime->completed ==1)echo "Completed";else echo "Plan To Watch" ?></td>
             <td>{{$anime->updated_at}}</td>
             <td><button type="button" class="addButton btn btn-default" onclick="document.getElementById({{$counter}}).submit()" style="background-color: Transparent;">
@@ -96,6 +204,10 @@
                 <input form="com{{ $counter }}" type="hidden" name="anime" value="{{$anime->anime}}"></input>
               </form>
 
+              <form method="POST" action="{{ URL::route('list.setRecNum') }}" id="rec{{ $anime->anime }}" style="display: none;">
+                <input form="rec{{ $anime->anime }}" type="hidden" name="anime" value="{{$anime->anime}}"></input>
+                <input id="changeNumRec{{$anime->anime}}" form="rec{{ $anime->anime }}" type="hidden" name="rec" value="<?php echo $defaultNumRec;?>"></input>
+              </form>
               <?php $counter++;$counter2++;?>
               @endforeach
             </table>
