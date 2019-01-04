@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use URL;
 use Auth;
+use Session;
 use App\animeRecommendation;
 class AnimeRecommendationController extends Controller
 {
@@ -17,10 +18,17 @@ class AnimeRecommendationController extends Controller
   }
 
   public function setRecNum(Request $request){
+
     $numRec = $request->input("rec");
     $anime = $request->input('anime');
     session([$anime."numOfRec" => $numRec]);
-    return redirect('/myList');
+    if(strpos(URL::previous(),"search/user/") !== false && strpos(URL::previous(),"/myList") === false){
+      $user = session('user');
+      Session::reflash();
+      return redirect('/search/user/'.$user);
+    }else{
+      return redirect('/myList');
+    }
   }
 
   public static function addRecommendations($animeName, $recommendations){
@@ -40,7 +48,7 @@ class AnimeRecommendationController extends Controller
     $counter=0;
     foreach ($RecAnimes as $a) {
       if($counter == $numRec)
-        break;
+      break;
       else{
         $recArray[]=array("title"=>$a->recommendation, "url"=>$a->recUrl);
         $counter++;
