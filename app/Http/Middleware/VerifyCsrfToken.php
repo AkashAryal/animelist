@@ -22,6 +22,7 @@ class VerifyCsrfToken extends Middleware
         //
         '/list/remove',
         '/list/complete',
-        
+        '/list/setRecNum',
+
     ];
 }
