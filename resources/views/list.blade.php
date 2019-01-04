@@ -63,7 +63,6 @@
 
           PictureUrlController::add($animeName,$pics,$synopsis); //add to database
           AnimeRecommendationController::addRecommendations($animeName,$recAnimesObj); //add to database
-          //ATTENTON: iF YOU CHANGe THS LNE BELOW, CHANGE THE SESSOMn ABOVE;
           $counter3=0;
           $recommendations=[];
           foreach ($recAnimesObj as $key => $value) {
@@ -178,7 +177,7 @@
             {document.getElementById('cover').src='{{session($animeName)[$p]}}';
             appendSynContainer();
             document.getElementById('synopsis').innerHTML='{{session($animeName)[$s]}}';
-            localStorage.setItem('animeR','<?php echo addslashes($anime->anime);?>');
+            localStorage.setItem('animeR','<?php echo $anime->anime;?>');
             createRecBox();
             document.getElementById('rList').innerHTML='<?php if(count(session($animeName)) ==3){
               $rec=session($animeName)[$r];
@@ -190,6 +189,7 @@
 
             <td><?php if($anime->completed ==1)echo "Completed";else echo "Plan To Watch" ?></td>
             <td>{{$anime->updated_at}}</td>
+
             <td><button type="button" class="addButton btn btn-default" onclick="document.getElementById({{$counter}}).submit()" style="background-color: Transparent;">
               <i class="fa fa-close"></i></button></td>
               <td><button type="button" class="addButton btn btn-default" onclick="document.getElementById('com{{$counter}}').submit()" style="background-color: Transparent;">

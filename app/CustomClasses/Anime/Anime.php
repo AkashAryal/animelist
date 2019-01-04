@@ -37,7 +37,7 @@ class Anime extends Jikan
 
 
         $animeArray[] = array("title"=>$value->getTitle(), "url"=>$value->getUrl());
-    
+
     }
     return $animeArray;
   }
