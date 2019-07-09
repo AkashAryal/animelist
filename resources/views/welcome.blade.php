@@ -13,7 +13,7 @@
         <h1 style="font-size: 100px; color: white;">Welcome</h1>
         <h2 style="font-size: 100px; color: white;">{{Auth::user()->username}}</h2>
       @else
-        <h1 style="color: white;">{{QuotesController::getRandQuote()}}</h1>
+        <h1 style="color: white; font-size: 1.3rem;">{{QuotesController::getRandQuote()}}</h1>
       @endif
       </div>
     </center>
