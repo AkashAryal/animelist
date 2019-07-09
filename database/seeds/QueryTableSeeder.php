@@ -6,7 +6,7 @@ class QueryTableSeeder extends Seeder
 {
   /**
   * Run the database seeds.
-  *
+  * When reseeding just add quotes to the array below and run "php artisan db:seed"
   * @return void
   */
   public function run()
@@ -20,6 +20,11 @@ class QueryTableSeeder extends Seeder
         "anime"=>"Bleach",
         "quote"=>"To know sorrow is not terrifying. What is terrifying is to know you can't go back to happiness you could have.",
         "character"=>"Matsumoto Rangiku"
+      ),
+      array(
+        "anime"=>"Tokyo Ghoul",
+        "quote"=>"Never trust anyone too much, remember the devil was once an angel.",
+        "character"=>"Kaneki Ken"
       ),
       array(
         "anime"=>"Yahari Ore no Seishun Love Comedy wa Machigatteiru",
