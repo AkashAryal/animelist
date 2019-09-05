@@ -59,7 +59,7 @@ class listController extends Controller
       $targetUsername=$request->input('user');
       $animes= animeList::where('username',$targetUsername)->get(['anime','completed','updated_at']);
 
-      if(animeList::where('username',$targetUsername)->count()>0)
+      if(animeList::where('username',$targetUsername)->count()>=0)
       {
         return Redirect::route('search.user',array('user'=>$targetUsername))->with(['animes'=>$animes, 'user'=>$targetUsername]);
       }
