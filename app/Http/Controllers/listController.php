@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\animeList;
+use App\User;
 use Auth;
 use Redirect;
 class listController extends Controller
@@ -59,12 +60,12 @@ class listController extends Controller
       $targetUsername=$request->input('user');
       $animes= animeList::where('username',$targetUsername)->get(['anime','completed','updated_at']);
 
-      if(animeList::where('username',$targetUsername)->count()>=0)
+      if(User::where('username',$targetUsername)->count()<=0){
+        return Redirect::route('search.user', array('user'=>$targetUsername))->with(['alert2'=> 'No such Username exists', 'animes'=>$animes, 'user'=>$targetUsername]);
+      }
+      else if(animeList::where('username',$targetUsername)->count()>=0)
       {
         return Redirect::route('search.user',array('user'=>$targetUsername))->with(['animes'=>$animes, 'user'=>$targetUsername]);
-      }
-      else {
-        return Redirect::route('search.user', array('user'=>$targetUsername))->with(['alert2'=> 'No such Username exists', 'animes'=>$animes, 'user'=>$targetUsername]);
       }
     }
 
