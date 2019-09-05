@@ -2,7 +2,11 @@
 
 
 return [
-
+  $url=parse_url(getenv("DATABASE_URL"));
+  $host=$url["host"];
+  $username=$url["user"];
+  $password=$url["pass"];
+  $database = substr($url["path"], 1);
     /*
     |--------------------------------------------------------------------------
     | Default Database Connection Name
@@ -14,8 +18,8 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mysql'),
-    //'default' => 'pgsql',
+    //'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => 'pgsql',
 
     /*
     |--------------------------------------------------------------------------
@@ -62,9 +66,9 @@ return [
             'driver' => 'pgsql',
             'host' => '',
             'port' => env('DB_PORT', '5432'),
-            'database' => '',
-            'username' => '',
-            'password' => '',
+            'database' => $database,
+            'username' => $username,
+            'password' => $password,
             'charset' => 'utf8',
             'prefix' => '',
             'prefix_indexes' => true,
