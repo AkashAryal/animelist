@@ -1,5 +1,4 @@
 <?php namespace App\CustomClasses\Anime;
-
 use Jikan\MyAnimeList\MalClient;
 use Jikan\Jikan;
 
