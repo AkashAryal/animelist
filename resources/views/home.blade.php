@@ -19,6 +19,7 @@
                 </div>
                 <div class="card-body formcard" style="border-bottom: 1px solid #7cb5ca;">
                     {{QuotesController::getRandQuote()}}
+                   <?php echo "hello" ?>
                 </div>
             </div>
         </div>
